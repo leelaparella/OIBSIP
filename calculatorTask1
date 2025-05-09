@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Calculator</title>
+  <style>
+    body {
+      background-color: #edf6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .calculator {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      width: 320px;
+    }
+
+    .display {
+      background-color: #dfe7fd;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 22px;
+      margin-bottom: 15px;
+    }
+
+    #inputDisplay {
+      width: 100%;
+      border: none;
+      font-size: 18px;
+      background: transparent;
+      outline: none;
+    }
+
+    #resultDisplay {
+      text-align: right;
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    button {
+      height: 50px;
+      font-size: 16px;
+      background-color: #a9def9;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background-color: #70c1b3;
+    }
+
+    .enter {
+      grid-column: span 2;
+      background-color: #0077b6;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="display">
+      <input type="text" id="inputDisplay" disabled />
+      <div id="resultDisplay">0</div>
+    </div>
+    <div class="buttons">
+      <button onclick="append('(')">(</button>
+      <button onclick="append(')')">)</button>
+      <button onclick="useAns()">ans</button>
+      <button onclick="deleteChar()">del</button>
+      <button onclick="clearAll()">clear</button>
+      <button onclick="append('7')">7</button>
+      <button onclick="append('8')">8</button>
+      <button onclick="append('9')">9</button>
+      <button onclick="append('%')">%</button>
+      <button onclick="applySqrt()">√</button>
+      <button onclick="append('4')">4</button>
+      <button onclick="append('5')">5</button>
+      <button onclick="append('6')">6</button>
+      <button onclick="append('*')">×</button>
+      <button onclick="append('/')">÷</button>
+      <button onclick="append('1')">1</button>
+      <button onclick="append('2')">2</button>
+      <button onclick="append('3')">3</button>
+      <button onclick="append('+')">+</button>
+      <button onclick="append('-')">-</button>
+      <button onclick="append('.')">.</button>
+      <button onclick="append('0')">0</button>
+      <button onclick="toggleNegative()">±</button>
+      <button class="enter" onclick="calculate()">ENTER</button>
+    </div>
+  </div>
+
+  <script>
+    let input = "";
+    let answer = 0;
+    let justCalculated = false;
+
+    function append(value) {
+      if (justCalculated) {
+        if (isOperator(value)) {
+          input = answer + value;
+        } else {
+          input = value;
+        }
+        justCalculated = false;
+      } else {
+        input += value;
+      }
+      updateDisplay();
+    }
+
+    function isOperator(char) {
+      return ['+', '-', '*', '/', '%'].includes(char);
+    }
+
+    function toggleNegative() {
+      const match = input.match(/(-?\d+(\.\d+)?)$/);
+      if (match) {
+        const num = match[0];
+        const neg = num.startsWith('-') ? num.slice(1) : '-' + num;
+        input = input.slice(0, -num.length) + neg;
+      }
+      updateDisplay();
+    }
+
+    function applySqrt() {
+      try {
+        let value = input ? eval(input) : answer;
+        answer = Math.sqrt(value);
+        input = answer.toString();
+        document.getElementById("resultDisplay").textContent = answer;
+        justCalculated = true;
+        updateDisplay();
+      } catch (e) {
+        document.getElementById("resultDisplay").textContent = "Error";
+      }
+    }
+
+    function updateDisplay() {
+      document.getElementById("inputDisplay").value = input;
+    }
+
+    function clearAll() {
+      input = "";
+      answer = 0;
+      justCalculated = false;
+      document.getElementById("inputDisplay").value = "";
+      document.getElementById("resultDisplay").textContent = 0;
+    }
+
+    function deleteChar() {
+      input = input.slice(0, -1);
+      updateDisplay();
+    }
+
+    function calculate() {
+      try {
+        let expr = input.replace(/÷/g, '/').replace(/×/g, '*');
+        answer = Function('return ' + expr)();
+        document.getElementById("resultDisplay").textContent = answer;
+        input = "";
+        justCalculated = true;
+      } catch (e) {
+        document.getElementById("resultDisplay").textContent = "Error";
+        justCalculated = false;
+      }
+    }
+
+    function useAns() {
+      input = answer.toString();
+      updateDisplay();
+      justCalculated = false;
+    }
+  </script>
+</body>
+</html>
