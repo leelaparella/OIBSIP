@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Authentication</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+        }
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .hidden {
+            display: none;
+        }
+        .error-message {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+        .success-message {
+            color: #16a34a;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+    <!-- Registration Form -->
+    <div id="register-form" class="form-container">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Register</h2>
+        <div class="space-y-4">
+            <div>
+                <label for="reg-username" class="block text-sm font-medium text-gray-700">Username</label>
+                <input id="reg-username" type="text" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter username">
+            </div>
+            <div>
+                <label for="reg-password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input id="reg-password" type="password" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter password">
+            </div>
+            <button onclick="register()" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Register</button>
+            <p class="text-center text-sm text-gray-600">Already have an account? <a href="#" onclick="showLogin()" class="text-blue-600 hover:underline">Login</a></p>
+            <p id="reg-message" class="error-message hidden"></p>
+        </div>
+    </div>
+
+    <!-- Login Form -->
+    <div id="login-form" class="form-container hidden">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
+        <div class="space-y-4">
+            <div>
+                <label for="login-username" class="block text-sm font-medium text-gray-700">Username</label>
+                <input id="login-username" type="text" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter username">
+            </div>
+            <div>
+                <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input id="login-password" type="password" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter password">
+            </div>
+            <button onclick="login()" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Login</button>
+            <p class="text-center text-sm text-gray-600">No account? <a href="#" onclick="showRegister()" class="text-blue-600 hover:underline">Register</a></p>
+            <p id="login-message" class="error-message hidden"></p>
+        </div>
+    </div>
+
+    <!-- Secured Page -->
+    <div id="secured-page" class="form-container hidden">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Secured Page</h2>
+        <p class="text-center text-gray-600">Welcome, <span id="current-user">User</span>!</p>
+        <button onclick="logout()" class="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition mt-4">Logout</button>
+    </div>
+
+    <script>
+        function showRegister() {
+            document.getElementById('register-form').classList.remove('hidden');
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('secured-page').classList.add('hidden');
+            document.getElementById('reg-message').classList.add('hidden');
+            document.getElementById('login-message').classList.add('hidden');
+        }
+
+        function showLogin() {
+            document.getElementById('register-form').classList.add('hidden');
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('secured-page').classList.add('hidden');
+            document.getElementById('reg-message').classList.add('hidden');
+            document.getElementById('login-message').classList.add('hidden');
+        }
+
+        function showSecuredPage(username) {
+            document.getElementById('register-form').classList.add('hidden');
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('secured-page').classList.remove('hidden');
+            document.getElementById('current-user').textContent = username;
+        }
+
+        // Placeholder functions for backend integration
+        function register() {
+            const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
+            const message = document.getElementById('reg-message');
+            // Simulate backend call
+            if (username && password) {
+                message.classList.remove('error-message');
+                message.classList.add('success-message');
+                message.textContent = 'Registration successful!';
+                message.classList.remove('hidden');
+                // Clear form
+                document.getElementById('reg-username').value = '';
+                document.getElementById('reg-password').value = '';
+            } else {
+                message.classList.add('error-message');
+                message.classList.remove('success-message');
+                message.textContent = 'Please fill in all fields!';
+                message.classList.remove('hidden');
+            }
+        }
+
+        function login() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const message = document.getElementById('login-message');
+            // Simulate backend call
+            if (username && password) {
+                message.classList.remove('error-message');
+                message.classList.add('success-message');
+                message.textContent = 'Login successful!';
+                message.classList.remove('hidden');
+                showSecuredPage(username);
+            } else {
+                message.classList.add('error-message');
+                message.classList.remove('success-message');
+                message.textContent = 'Invalid username or password!';
+                message.classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            showLogin();
+        }
+    </script>
+</body>
+</html>
